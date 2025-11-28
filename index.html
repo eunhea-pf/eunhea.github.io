@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SHIN EUN HEA DESIGN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://eunhea-pf.naru.pub/img/favicon.png" type="image/png">
+    
+    <style>
+        /* 기본 리셋 및 폰트 설정 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f7f7f7;
+            background-image: url('https://eunhea-pf.naru.pub/img/bg.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #888888;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* 2. 메인 화면 (데스크톱 영역) - 헤더가 없어 padding-top 조정 */
+        .desktop-screen {
+            min-height: 100vh; /* 화면 전체 높이 사용 */
+            padding: 20px 0 0; /* 상단 여백 최소화 */
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* (선택 사항) 오버레이 효과 */
+        .desktop-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.3);
+            z-index: -1;
+        }
+        
+
+        /* 3. 파일 아이콘 그리드 - 드래그 앤 드롭 기준점 설정 */
+        .files-container {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .file-icon-grid {
+            position: relative;
+            min-height: 80vh; 
+            width: 100%;
+            padding: 30px 0;
+        }
+
+        /* 4. 파일 아이콘 - 드래그 가능 요소 스타일 */
+        .file-icon {
+            background: none;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 120px;
+            padding: 10px;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            border-radius: 8px;
+            
+            cursor: grab;
+            position: absolute;
+            z-index: 1; 
+        }
+
+        .file-icon:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    /* **** 새로 추가: 마우스 오버 시 1.1배 확대 **** */
+    transform: scale(1.1); 
+    z-index: 2; /* 확대될 때 다른 아이콘 위에 오도록 z-index를 높입니다. */
+}
+        
+        .file-icon:active {
+            cursor: grabbing;
+        }
+
+        .file-icon img {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 10px;
+            border-radius: 15%; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-icon span {
+            font-size: 14px;
+            text-align: center;
+            color: #1a1a1a;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+      .file-icon:hover span {
+    font-weight: 700; /* 굵게 */
+    color: #007aff; /* macOS 스타일의 파란색으로 변경 (선택 사항) */
+        }
+
+        /* 5. 모달(팝업) 스타일 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+.modal-content {
+    background-color: #ffffff;
+    padding: 20px 30px 30px 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 1000px;
+    position: relative;
+    max-height: 90vh;
+    /* **** 수정: 전체 컨테이너의 스크롤을 hidden 처리 **** */
+    overflow-y: hidden; 
+}
+        
+        /* 6. macOS 창 제목 표시줄 스타일 */
+        .window-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .window-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #555555;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .modal-content .close-button {
+            position: static;
+            font-size: 20px;
+            color: #888;
+            background: none;
+            border: none;
+            cursor: pointer;
+            order: 3;
+        }
+
+        .traffic-lights {
+            display: flex;
+            gap: 8px;
+            order: 1;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background-color: #ff5f56; } 
+        .dot.yellow { background-color: #ffbd2e; }
+        .dot.green { background-color: #27c93f; }
+
+        /* 6-1. 윈도우 헤더 (모달 창 상단) */
+        .window-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            background-color: var(--window-bg);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            cursor: grab;
+        }
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+        .control-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.1s;
+        }
+        .close-btn { background-color: #ff605c; }
+        .minimize-btn { background-color: #ffbd44; }
+        .maximize-btn { background-color: #00ca4e; }
+        .window-title {
+            flex-grow: 1;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+
+      
+/* 7. 모달 본문 스타일 섹션 */
+.modal-body {
+    display: flex;
+    gap: 40px;
+    padding-top: 20px;
+    
+    /* **** 수정: 전체 모달 본문 스크롤 제거 **** */
+    max-height: calc(90vh - 150px); 
+    overflow-y: hidden; /* 이 요소는 스크롤되지 않습니다. */
+    padding-right: 0; /* 스크롤바 공간 확보 패딩 제거 */
+}
+
+/* .modal-image 수정 */
+.modal-image {
+    flex: 2;
+    
+    /* **** 추가: 이 영역만 스크롤 가능하게 설정 **** */
+    overflow-y: auto;
+    /* 이미지 영역이 전체 높이를 차지하도록 함 */
+    max-height: 100%; 
+    padding-right: 5px; /* 스크롤바 공간 확보 (모달 모서리를 가리지 않도록) */
+}
+
+/* .modal-image img (이미지 자체는 가로 폭에 맞게 조정) */
+.modal-image img {
+    width: 100%;
+    height: auto; /* 이미지 세로 길이에 따라 스크롤 발생 */
+    display: block;
+    border-radius: 0px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    
+    /* **** 확인: 이 영역은 고정됩니다. **** */
+    overflow-y: hidden; 
+}
+
+        .modal-text h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .modal-text .category-tag {
+            color: #555;
+            font-size: 13px;
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        .modal-text p {
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+
+        .full-case-study {
+            margin-top: auto;
+            font-weight: 700;
+            color: #007aff;
+        }
+
+        /* 8. Taskbar Dock 스타일 (하단 고정 메뉴) */
+        .taskbar-dock {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1500;
+            
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .dock-container {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .dock-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: transform 0.2s ease-out;
+position: relative; /* ::after 요소를 위한 기준점 설정 */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s ease-out;
+}
+
+      .separator {
+    /* 선의 기본 크기 및 배경 설정 */
+    width: 1px; /* 선의 두께 */
+    height: 40px; /* 선의 높이 (아이콘 높이보다 조금 짧게) */
+    background-color: rgba(255, 255, 255, 0.3); /* 선의 색상 */
+    
+    /* dock-container의 간격(gap)을 활용하여 배치 */
+    margin: 0 5px; 
+    
+    /* 세로선이 중앙에 오도록 정렬 */
+    align-self: center; 
+}
+      
+
+/* 툴팁 (말풍선) 스타일 섹션 */
+.dock-icon::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: -55px; /* 아이콘 위쪽에 위치 */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    white-space: nowrap;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.8); /* 툴팁 본체 배경색 */
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 400;
+    
+    opacity: 0; 
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    pointer-events: none;
+}
+
+/* **** 새로 추가: 툴팁 꼬리 (삼각형) 스타일 **** */
+.dock-icon::before {
+    content: ''; /* 빈 내용 */
+    position: absolute;
+    top: -33px; /* 툴팁 본체 아래(아이콘 위)에 위치 */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    /* border 속성을 이용해 삼각형 모양 생성 */
+    border-width: 5px; /* 삼각형 크기 */
+    border-style: solid;
+    
+    /* 위쪽만 투명하지 않게 설정하여 아래로 향하는 꼬리 모양 생성 */
+    border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent; 
+    
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    pointer-events: none;
+}
+
+/* **** 수정: 마우스 오버 시 툴팁 본체와 꼬리 모두 보이게 설정 **** */
+.dock-icon:hover::after,
+.dock-icon:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 모바일 반응형 디자인에서 툴팁과 꼬리 모두 숨기기 */
+@media (max-width: 768px) {
+    .dock-icon::after,
+    .dock-icon::before {
+        content: none;
+    }
+}
+
+        .dock-icon img {
+            width: 50px;
+            height: 50px;
+            display: block;
+        }
+
+
+/* 9. 반응형 디자인 */
+@media (max-width: 768px) {
+    
+    /* 1. 모달 본문 (modal-body) 수정: 세로 정렬 및 스크롤 허용 */
+    .modal-body {
+        flex-direction: column; 
+        gap: 0; /* 텍스트와 이미지 사이의 간격 제거 (필요 시 유지 가능) */
+        
+        /* 모바일 모달 본문이 전체 높이를 차지하도록 설정 */
+        max-height: calc(90vh - 100px); 
+        overflow-y: auto; /* **** 모바일에서는 modal-body 전체 스크롤 허용 **** */
+        padding-right: 15px; /* 스크롤바 공간 확보 */
+    }
+  
+            /* 모바일에서 notepad-window 숨기기 (공간이 부족하여) */
+            .notepad-window {
+                display: none;
+            }
+    
+    /* 2. 텍스트 영역 (modal-text) 수정: 상단 고정 */
+    .modal-text {
+        order: 1; 
+        flex: none; /* 내용물 높이에 맞게 고정 */ 
+        
+        /* 고정 시 이미지 위를 덮도록 배경과 z-index 설정 */
+        background-color: #ffffff; 
+        padding-bottom: 20px; /* 텍스트 아래 여백 */
+    }
+
+    /* 3. 이미지 영역 (modal-image) 수정: 텍스트 아래 배치 및 스크롤 제어 해제 */
+    .modal-image {
+        order: 2;
+        flex: none; /* 높이를 콘텐츠에 맞게 고정 */
+        
+        /* PC 버전에서 설정했던 이미지 개별 스크롤 속성을 해제합니다. */
+        overflow-y: visible;
+        padding-right: 0;
+        
+        /* 이미지와 텍스트 사이의 여백 (선택 사항) */
+        margin-top: 10px; 
+    }
+
+    /* 4. 이미지 높이 설정 (스크롤되도록 이미지가 본래 크기를 갖게 함) */
+    .modal-image img {
+        width: 100%;
+        height: auto; /* 이미지가 자신의 실제 세로 길이를 가지게 하여 스크롤을 유발 */
+    }
+    
+    /* (나머지 미디어 쿼리 내 스타일은 그대로 유지) */
+    .file-icon {
+        width: 80px;
+    }
+    
+    /* **** 기존 스타일 유지 **** */
+    .file-icon {
+        width: 80px;
+    }
+    .file-icon img {
+        width: 50px;
+        height: 50px;
+    }
+    .modal-content {
+        padding: 20px;
+    }
+    .taskbar-dock {
+        bottom: 10px;
+        padding: 5px;
+        border-radius: 10px;
+    }
+    .dock-container {
+        gap: 10px;
+    }
+    .dock-icon img {
+        width: 40px;
+        height: 40px;
+    }
+    .dock-icon:hover {
+        transform: scale(1.1);
+    }
+}
+
+.button-style {
+  display: inline-block; /* <a> 태그를 블록 요소처럼 다루어 크기와 패딩 적용 */
+  padding: 10px 20px;
+  background-color: #007bff; /* 배경색 */
+  color: white; /* 텍스트 색상 */
+  text-align: center;
+  text-decoration: none; /* 밑줄 제거 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  font-size: 16px;
+  cursor: pointer; /* 마우스 오버 시 포인터 모양으로 변경 */
+}
+
+.button-style:hover {
+  background-color: #0056b3; /* 마우스 오버 시 색상 변경 */
+}
+      
+/* --- 10. 메모장 윈도우 스타일 (새로 추가) --- */
+        .notepad-window {
+            position: absolute;
+            top: 150px; /* 초기 위치 */
+            left: 200px;
+            width: 350px;
+            min-height: 150px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 5; /* 아이콘보다 높게, 모달보다 낮게 */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .notepad-window .window-header {
+            cursor: grab; /* 드래그 핸들 */
+        }
+        .notepad-window .window-controls {
+             /* 데모 창이므로 제어 버튼 비활성화 */
+            pointer-events: none; 
+        }
+
+        .notepad-content {
+            padding: 30px 15px 15px 15px;
+            flex-grow: 1;
+            font-family: 'Monospace', 'Courier New', monospace;
+            font-size: 28px; /* 글자를 크게 강조 */
+            font-weight: 700;
+            color: #333;
+            background-color: #ffffff; /* 흰색 에디터 배경 */
+            border-top: 1px solid #eee;
+            min-height: 80px;
+        }
+
+        .typing-text {
+            display: inline;
+            margin: 0;
+            padding: 0;
+            color: var(--primary-blue); /* 글자색 강조 */
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 3px; /* 커서 굵기 */
+            height: 28px; /* 폰트 크기와 맞춤 */
+            background-color: var(--primary-blue);
+            margin-left: 5px;
+            vertical-align: middle;
+            /* 커서 깜빡임 애니메이션 */
+            animation: blink 0.7s infinite step-end;
+        }
+
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+      
+    </style>
+</head>
+<body>
+
+    <main class="desktop-screen">
+        <div class="container files-container" id="projects">
+
+        <!-- 메모장 윈도우 (Typewriter 효과 및 드래그 가능) -->
+        <div class="notepad-window" id="notepad-intro">
+            <div class="window-header" style="margin-bottom: -20px; background-color:#f0f0f0;">
+                <div class="window-controls">
+                    <button class="control-btn close-btn"></button>
+                    <button class="control-btn minimize-btn"></button>
+                    <button class="control-btn maximize-btn"></button>
+                </div>
+                <span class="window-title">Read Me.txt</span>
+            </div>
+            <div class="notepad-content">
+                <p class="typing-text" id="typing-output"></p>
+                <div class="typing-cursor"></div>
+            </div>
+        </div>
+      
+            <section class="file-icon-grid">
+                
+                <button class="file-icon" data-modal-target="modal-1">
+                    <img src="https://eunhea-pf.naru.pub/img/01_th.jpg" alt="Project 1 Icon">
+                    <span>Holiday Focus</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-2">
+                    <img src="https://eunhea-pf.naru.pub/img/02_th.jpg" alt="Project 2 Icon">
+                    <span>t-shirt festival</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-3">
+                    <img src="https://eunhea-pf.naru.pub/img/03_th.jpg" alt="Project 3 Icon">
+                    <span>morethanblack</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-4">
+                    <img src="https://eunhea-pf.naru.pub/img/04_th.jpg" alt="Project 4 Icon">
+                    <span>the key of winter</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-5">
+                    <img src="https://eunhea-pf.naru.pub/img/05_th.jpg" alt="Project 5 Icon">
+                    <span>depound lookbook</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-6">
+                    <img src="https://eunhea-pf.naru.pub/img/06_th.jpg" alt="Project 6 Icon">
+                    <span>Attendance Check Promotion</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-7">
+                    <img src="https://eunhea-pf.naru.pub/img/07_th.jpg" alt="Project 7 Icon">
+                    <span>New sign-up promotion</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-8">
+                    <img src="https://eunhea-pf.naru.pub/img/08_th.jpg" alt="Project 8 Icon">
+                    <span>one day stage</span>
+                </button>
+              
+                <button class="file-icon" data-modal-target="modal-9">
+                    <img src="https://eunhea-pf.naru.pub/img/09_th.jpg" alt="Project 9 Icon">
+                    <span>review letter for you</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-10">
+                    <img src="https://eunhea-pf.naru.pub/img/10_th.jpg" alt="Project 10 Icon">
+                    <span>exclusive life item</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-11">
+                    <img src="https://eunhea-pf.naru.pub/img/11_th.jpg" alt="Project 11 Icon">
+                    <span>Brand Reminder</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-12">
+                    <img src="https://eunhea-pf.naru.pub/img/12_th.jpg" alt="Project 12 Icon">
+                    <span>pre summer free summer</span>
+                </button>              
+
+                <button class="file-icon" data-modal-target="modal-13">
+                    <img src="https://eunhea-pf.naru.pub/img/13_th.jpg" alt="Project 13 Icon">
+                    <span>dunst summer 2nd</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-14">
+                    <img src="https://eunhea-pf.naru.pub/img/insta_th.jpg" alt="Project 14 Icon">
+                    <span>Instagram</span>
+                </button>
+
+                <button class="file-icon" data-modal-target="modal-15">
+                    <img src="https://eunhea-pf.naru.pub/img/banner_th.jpg" alt="Project 15 Icon">
+                    <span>banner</span>
+                </button>              
+
+                <button class="file-icon" data-modal-target="modal-18">
+                    <img src="https://eunhea-pf.naru.pub/img/p01_th.jpg" alt="Project 16 Icon">
+                    <span>black friday</span>
+                </button>  
+
+                <button class="file-icon" data-modal-target="modal-19">
+                    <img src="https://eunhea-pf.naru.pub/img/p02_th.jpg" alt="Project 17 Icon">
+                    <span>NOIRNE BRANDING</span>
+                </button>              
+              
+            </section>
+        </div>
+    </main>
+
+    <div class="taskbar-dock">
+        <div class="dock-container">
+            <button class="dock-icon" data-modal-target="modal-16" data-tooltip="Deps UI/UX">
+                <img src="https://eunhea-pf.naru.pub/img/Deps.png" alt="Deps UI/UX">
+            </button>
+          
+            <button class="dock-icon" data-modal-target="modal-17" data-tooltip="FashionPlus UI/UX">
+                <img src="https://eunhea-pf.naru.pub/img/Fashion.png" alt="FashionPlus UI/UX">
+            </button>
+
+            <div class="separator"></div>
+          
+            <button class="dock-icon" data-modal-target="modal-about" data-tooltip="About Me">
+                <img src="https://eunhea-pf.naru.pub/img/Notes.png" alt="About Me">
+            </button>
+            
+            <button class="dock-icon" data-modal-target="modal-contact" data-tooltip="Contact">
+                <img src="https://eunhea-pf.naru.pub/img/Mail.png" alt="Contact">
+            </button>
+
+            <button class="dock-icon" data-modal-target="modal-skills" data-tooltip="Skills">
+                <img src="https://eunhea-pf.naru.pub/img/Settings.png" alt="Skills">
+            </button>
+
+            <button class="dock-icon" data-modal-target="modal-resume" data-tooltip="Resume">
+                <img src="https://eunhea-pf.naru.pub/img/Folder.png" alt="Resume">
+            </button>
+        </div>
+    </div>
+
+
+    <div id="modal-1" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">Holiday Focus</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/01.png" alt="Fashion App Redesign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>홀리데이 포커스 전사 기획전</h2>
+                    <p class="category-tag">
+                      작업 기간 : 5일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator, Dimension</p>
+                    <p>
+홀리데이 컨셉에 맞춰 전체적으로 블랙색상에
+골드를 키컬러로 확장시켰습니다.
+메인부분 강조하여 눈에 들어올 수 있도록
+타이틀을 3D로 작업하였고, 빛 오브제에 
+CSS fade-in/fade-out 애니메이션을 적용하여
+시각적 임팩트를 강화했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-2" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">t-shirt festival</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/02.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>티셔츠 페스티벌 기획전</h2>
+                    <p class="category-tag">
+                      작업 기간 : 3일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator, Dimension</p>
+                    <p>
+페스티벌 컨셉에 맞춰시각적으로 전달하기 위해 
+하늘 배경과 3D 텍스트 효과를 활용했습니다. 
+폰트 선택부터 파티클, 무지개와 같은 디테일한
+요소까지 통일감 있게 배치하여 시각적 즐거움과 
+정보 전달력을 동시에 고려하여 작업했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-3" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">morethanblack</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/03.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>모어댄블랙 쇼룸&인플루언서 기획전</h2>
+                    <p class="category-tag">
+                      작업 기간 : 4일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+쇼룸의 블랙 무드, 제품의 텍스처감, 모델컷의 
+분위기 등을 하나의 통일된 그리드와 
+컬러 팔레트(모노크롬 + 실버 포인트)로 엮어 
+브랜드만의 키비주얼을 구성했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-4" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">the key of winter</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/04.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>WINTER 아이템의 답 기획전</h2>
+                    <p class="category-tag">
+                      작업 기간 : 4일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+모델 컷을 중심으로 자연스러운 
+톤 앤 매너를 유지하였고, 섹션 중간중간 
+swipe-slide 와 fade-in/fade-out CSS를 
+삽입하여 스크롤이 너무 길어지지 않도록
+작업했습니다. 모델이 착용 제품에 인터랙티브
+링크를 적용하여 자연스럽게 쇼핑으로 
+연결될 수 있도록 구현했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-5" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">depound lookbook</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/05.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>드파운드 룩북 기획전</h2>
+                    <p class="category-tag">
+                      작업 기간 : 3일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+겨울 컨셉에 맞춰 따뜻하고 감성적인 분위기를
+연출하는 데 집중했습니다. 모델 컷을 중심으로 
+자연스러운 톤 앤 매너를 유지하면서도 
+효과적인 정보 전달이 가능하도록 
+레이아웃을 구성했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-6" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">Attendance Check Promotion</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/06.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>출석 체크 프로모션</h2>
+                    <p class="category-tag">
+                      작업 기간 : 3일<br>
+                      기여도 : 디자인 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+봄 분위기를 표현할 수 있는 연핑크를 키컬러로 
+잡아 작업했습니다. 벚꽃, 달력, 스탬프 오브제를 
+배치하여 계절성을 더했습니다.
+캘린더에 특별 혜택을 주는 날짜를 컬러로 표현하여
+소비자의 재방문을 유도했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-7" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">New sign-up promotion</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/07.gif" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>신규가입 프로모션</h2>
+                    <p class="category-tag">
+                      작업 기간 : 3일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+프로모션 내용에 맞춰 선물상자와 쿠폰팩을 
+키비주얼로 활용하여 디자인 했습니다. 
+또한 선물상자에 애니메이션(GIF)을 사용하여 
+소비자의 눈길을 끌 수 있도록 하였습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>  
+
+    <div id="modal-8" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">one day stage</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/08.gif" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>원데이 특가 기획전</h2>
+                    <p class="category-tag">
+                      작업 기간 : 4일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+하루 동안 진행되는 특가 이벤트를 강조하기 위해 
+레드와 옐로우 컬러를 활용하였고, 애니메이션(GIF)을 사용하여
+주목도를 높였습니다. 사용자가 혜택을 직관적으로 인지할 수 있도록 
+상단에 쿠폰 영역을 배치하고, 중단에는 카테고리별 탭(Tab) UI를 적용하여
+원하는 상품을 쉽게 탐색할 수 있도록 구성했습니다. 
+하단 브랜드 영역은 블랙 컬러로 반전 효과를 주어
+프리미엄한 무드를 연출했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div id="modal-9" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">review letter for you</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/09.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>라이프 리뷰레터 기획전</h2>
+                    <p class="category-tag">
+                      작업 기간 : 4일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+고객들의 소중한 리뷰를 한 편의 편지처럼 전달하기 위해
+'아날로그 스크랩북'을 메인 컨셉으로 잡았습니다.
+찢어진 종이 질감, 손글씨 타이포그래피, 마스킹 테이프 등의 
+오브제를 활용하여 '다이어리 꾸미기(다꾸)' 감성을 연출했습니다. 
+각 카테고리마다 옐로우, 핑크, 민트의 화사한 파스텔 톤 배경을 적용하여
+산뜻함을 시각적으로 표현했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div id="modal-10" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">exclusive life item</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/10.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>라이프 기획전</h2>
+                    <p class="category-tag">
+                      작업 기간 : 3일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+상단 헤더에 추상 미술 요소를 활용한 유니크한 아트워크를 배치하여 
+페이지 전체에 갤러리 같은 감각적이고 세련된 무드로 작업했습니다.
+메인 콘텐츠 영역에는 따뜻한 베이지 톤 배경을 사용하여 
+제품 이미지에 시선이 집중되도록 유도했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div id="modal-11" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">Brand Reminder</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/11.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>브랜드 리마인더 기획전</h2>
+                    <p class="category-tag">
+                      작업 기간 : 2일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+딥 레드(Deep Red)와 블랙을 메인 컬러로 사용하여 
+강렬하고 시크한 브랜드 이미지를 각인시키고자 했습니다.
+상단 히어로 섹션은 비대칭 분할 레이아웃과 세로형 텍스트 요소를 배치하여 
+패션 매거진 표지 같은 세련된 인상을 줄 수 있도록 작업했습니다. 
+하단 컨텐츠 영역은 브랜드별 화보와 텍스트를 카드 형태로 정리하여 
+가독성을 높이면서도 통일감 있는 무드를 연출했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div id="modal-12" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">pre summer free summer</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/12.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>프리썸머 기획전</h2>
+                    <p class="category-tag">
+                      작업 기간 : 5일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+여름 컨셉에 맞춰 시원한 아이스 블루(Ice Blue) 컬러와 
+투명한 질감을 메인 테마로 잡았습니다.<br>
+                      
+상단 비주얼의 3D 글래스 오브제에 둥둥 떠다니는 듯한 
+부유 애니메이션(Floating Animation) 효과를 적용하여
+사용자에게 시각적 즐거움을 선사할 수 있도록 디자인했습니다.<br>
+
+구매 전환율을 높이기 위해 상단에 타임 세일(Countdown) UI와 
+쿠폰 다운로드 영역을 배치하여 긴박감과 혜택을 강조했습니다.<br>
+
+하단의 브랜드 라인업 섹션은 텍스트가 많은 방대한 정보를 
+컬러별(민트/퍼플/블랙) 테이블 UI로 구조화하여, 
+사용자가 원하는 정보를 빠르고 직관적으로 찾을 수 있도록 
+정보 설계에 공을 들였습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div id="modal-13" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">dunst summer 2nd</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/13.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>던스트 SUMMER 2ND</h2>
+                    <p class="category-tag">
+                      작업 기간 : 3일<br>
+                      기여도 : 디자인 및 퍼블 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+자연광과 휴양지 무드를 활용해 브랜드의 여름 감성을 
+담은 라이프스타일 비주얼 캠페인을 구성했습니다.
+컷의 리듬감 있는 배열을 통해 하나의 여행 스토리처럼 
+자연스럽게 흐르도록 디자인했고,
+미니멀하고 담백한 톤앤매너를 유지해 Dunst의 
+브랜드 아이덴티티를 강조했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div id="modal-14" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">Instagram</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/insta.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>인스타그램 메타광고</h2>
+                    <p class="category-tag">
+                      기여도 : 디자인 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+인스타그램 광고에 들어가는 이미지를 제작했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div id="modal-15" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">banner</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/banner.png" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>운영배너 디자인</h2>
+                    <p class="category-tag">
+                      기여도 : 디자인 100% (기업 프로젝트)<br>
+                      사용 프로그램 : Photoshop, Illustrator</p>
+                    <p>
+메인배너 이미지를 제작했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>  
+
+    <div id="modal-16" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">Deps UI/UX</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/uiux_01.jpg" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>뎁스 UI/UX (현재서비스종료)</h2>
+                    <p class="category-tag">
+                      작업 기간 : 2023.01 - 2023.06<br>
+                      기여도 : 90% (기업 프로젝트)<br>
+                      사용 프로그램 : Figma</p>
+                    <p>
+남성 컨템포러리 패션 플랫폼 뎁스(Deps)의 
+UI/UX 디자인을 작업했습니다.<br>
+감도 높은 남성 고객층을 위한 브랜드 경험 강화 및 
+쇼핑 흐름 최적화를 주요 목표로 했기 때문에
+일반적인 쇼핑몰 형태보다는 매거진 형식을 착안하여
+작업하였습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div id="modal-17" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">FashionPlus UI/UX</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/uiux_02.jpg" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>패션플러스 메인 UI/UX 리뉴얼</h2>
+                    <p class="category-tag">
+                      작업 기간 : 2025.02 - 2025.04<br>
+                      기여도 : 90% (기업 프로젝트)<br>
+                      사용 프로그램 : Figma</p>
+                    <p>
+패션 아울렛 플랫폼 패션플러스(fashionplus)의 
+메인 UI/UX 디자인을 작업했습니다.<br>
+2000년대 초반 감성이 남아 있는 구형 레이아웃을
+최신 UI/UX 트렌드에 맞게 재해석하여, 
+콘텐츠 가독성과 시각적 안정성을 강조한 
+사용자 중심 구조로 개선했습니다.</p>
+                  <a href="https://www.fashionplus.co.kr/" target="_blank" class="button-style">website →</a>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div id="modal-18" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">black friday</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/p01.gif" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>블랙프라이데이</h2>
+                    <p class="category-tag">
+                      작업 기간 : 2일<br>
+                      기여도 : 기획 및 디자인 100% (개인 작업)<br>
+                      사용 프로그램 : Photoshop, Blender, After Effects</p>
+                    <p>
+블랙 프라이데이 프로모션 비주얼로, ‘90% SALE’ 문구를 
+블렌더로 무광 블랙 3D 텍스처로 제작하고 
+After Effects에서 바운스 애니메이션을 적용해 
+생동감을 준 디자인입니다. 
+화이트 배경과 미니멀한 타이포그래피로 
+3D 오브젝트의 임팩트를 강조했습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div id="modal-19" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">NOIRNE BRANDING</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="modal-image">
+                    <img src="https://eunhea-pf.naru.pub/img/p02.jpg" alt="Banner Campaign 상세 이미지">
+                </div>
+                <div class="modal-text">
+                    <h2>NOIRNE(누아른) 가상 브랜딩</h2>
+                    <p class="category-tag">
+                      작업 기간 : 2025년 11월<br>
+                      기여도 : 기획 및 디자인 100% (개인 작업)<br>
+                      사용 프로그램 : Photoshop, After Effects, Nano Banana</p>
+                    <p>
+미니멀한 실루엣과 조용한 럭셔리 무드를 핵심으로 한
+가상 가방 브랜드 NOIRNE(누아른)의 브랜딩 작업입니다.
+사용된 모든 이미지는 AI(Nano Banana)를 활용했습니다.</p>
+                  <a href="https://youtu.be/6XR9uTx05gM" target="_blank" class="button-style">brand video →</a>
+                </div>
+            </div>
+        </div>
+    </div> 
+  
+  
+    <div id="modal-about" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">About Shin Eun Hea</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-text" style="flex: none; width: 100%;">
+                    <h2>Who am I?</h2>
+                    <p>안녕하세요, 시각적 완성도와 사용자 경험을 모두 고려하는 웹디자이너 신은혜입니다.<br>
+9년간 다양한 브랜드의 비주얼 디자인과 웹·모바일 콘텐츠 제작을 경험하며, 기획부터 디자인, 구현까지 연결되는 작업을 주도적으로 수행해 왔습니다.<br>
+트렌드를 읽고 감각적인 결과물을 만들어내는 것에 즐거움을 느끼며, 새로운 툴과 기술을 배우는 데도 적극적입니다.<br>
+앞으로도 더 나은 사용자 경험과 브랜드 가치를 만드는 디자인을 이어가고 싶습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-contact" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">Get in Touch</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-text" style="flex: none; width: 100%;">
+                    <h2>Contact Information</h2>
+                    <p>📧 Email: shey4012@gmail.com<br>
+                    📞 Phone: 010-3756-2636</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-skills" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">Skills & Tools</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-text" style="flex: none; width: 100%;">
+                    <h2>Key Competencies</h2>
+                    <p>Photoshop, Illustrator, Dimension<br>
+                    Figma, Gemini, Rremier pro. After Effect<br>
+                    HTML, CSS3, Javascript</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-resume" class="modal-overlay">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="window-title">My Resume</span> 
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-text" style="flex: none; width: 100%;">
+                    <h2>Download / View</h2>
+                    <p>제 이력서(PDF)를 다운로드하시거나 온라인으로 확인하실 수 있습니다.</p>
+                    <a href="https://eunhea-pf.naru.pub/img/신은혜_이력서.html" >Resume 다운로드 (PDF) →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileIcons = document.querySelectorAll('.file-icon');
+            const modals = document.querySelectorAll('.modal-overlay');
+            const filesContainer = document.querySelector('.file-icon-grid');
+            const notepadWindow = document.getElementById('notepad-intro');
+
+            // CSS에서 설정한 아이콘 크기
+            const ICON_WIDTH = 120; 
+            const ICON_HEIGHT = 120; 
+            const MIN_DISTANCE = 160; 
+
+            // ==============================================
+            // 1. 아이콘 랜덤 위치 설정 (충돌 회피 로직 포함)
+            // ==============================================
+            const randomizeIconPosition = () => {
+                const containerRect = filesContainer.getBoundingClientRect();
+                const containerWidth = containerRect.width;
+                const containerHeight = containerRect.height;
+                
+                const placedIcons = [];
+
+                fileIcons.forEach(icon => {
+                    let randomX, randomY;
+                    let isColliding = false;
+                    let attempts = 0;
+                    const MAX_ATTEMPTS = 50; 
+
+                    icon.style.position = 'absolute'; 
+
+                    do {
+                        isColliding = false;
+                        attempts++;
+
+                        randomX = Math.floor(Math.random() * (containerWidth - ICON_WIDTH));
+                        randomY = Math.floor(Math.random() * (containerHeight - ICON_HEIGHT));
+
+                        for (const placedPos of placedIcons) {
+                            const dx = (randomX + ICON_WIDTH / 2) - placedPos.centerX;
+                            const dy = (randomY + ICON_HEIGHT / 2) - placedPos.centerY;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+
+                            if (distance < MIN_DISTANCE) {
+                                isColliding = true;
+                                break;
+                            }
+                        }
+
+                        if (attempts > MAX_ATTEMPTS) {
+                            isColliding = false; 
+                        }
+
+                    } while (isColliding);
+
+                    icon.style.left = `${randomX}px`;
+                    icon.style.top = `${randomY}px`;
+
+                    placedIcons.push({
+                        centerX: randomX + ICON_WIDTH / 2,
+                        centerY: randomY + ICON_HEIGHT / 2
+                    });
+                });
+            };
+            
+            // 페이지 로드 후 즉시 랜덤 위치 적용 및 리사이즈 이벤트 등록
+            randomizeIconPosition(); 
+            window.addEventListener('resize', randomizeIconPosition);
+
+            // ==============================================
+            // 2. 모달(팝업) 기능
+            // ==============================================
+            modals.forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('close-button') || e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+
+            const allIcons = document.querySelectorAll('.file-icon, .dock-icon');
+
+            allIcons.forEach(icon => {
+                icon.addEventListener('click', (e) => {
+                    // 드래그 중인 경우 클릭 이벤트를 막음
+                    if (icon.classList.contains('file-icon') && icon.classList.contains('dragging')) {
+                        icon.classList.remove('dragging');
+                        return;
+                    }
+                    
+                    const targetId = icon.getAttribute('data-modal-target');
+                    if (targetId) {
+                       document.getElementById(targetId).style.display = 'flex';
+                    }
+                });
+            });
+          
+            // ==============================================
+            // 3. 아이콘 드래그 앤 드롭 (Drag-and-Drop) 기능
+            // ==============================================
+            fileIcons.forEach(icon => {
+                let isDragging = false;
+                let offsetX, offsetY;
+                
+                const startDrag = (e) => {
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const clientY = e.clientY || e.touches[0].clientY;
+
+                    isDragging = false;
+                    
+                    if (e.target.closest('.modal-content')) return;
+
+                    const rect = icon.getBoundingClientRect();
+                    offsetX = clientX - rect.left;
+                    offsetY = clientY - rect.top;
+
+                    icon.style.zIndex = 1001; 
+
+                    document.addEventListener('mousemove', dragMove);
+                    document.addEventListener('mouseup', endDrag);
+                    document.addEventListener('touchmove', dragMove);
+                    document.addEventListener('touchend', endDrag);
+                };
+
+                const dragMove = (e) => {
+                    e.preventDefault(); 
+                    
+                    isDragging = true; 
+                    icon.classList.add('dragging'); 
+
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const clientY = e.clientY || e.touches[0].clientY;
+
+                    const containerRect = filesContainer.getBoundingClientRect();
+                    
+                    let newX = clientX - containerRect.left - offsetX;
+                    let newY = clientY - containerRect.top - offsetY;
+
+                    // 경계 체크
+                    newX = Math.max(0, Math.min(newX, containerRect.width - icon.offsetWidth));
+                    newY = Math.max(0, Math.min(newY, containerRect.height - icon.offsetHeight));
+
+
+                    icon.style.left = `${newX}px`;
+                    icon.style.top = `${newY}px`;
+                };
+
+                const endDrag = () => {
+                    if (isDragging) {
+                        icon.style.zIndex = 1; 
+                    }
+
+                    document.removeEventListener('mousemove', dragMove);
+                    document.removeEventListener('mouseup', endDrag);
+                    document.removeEventListener('touchmove', dragMove);
+                    document.removeEventListener('touchend', endDrag);
+                };
+
+                icon.addEventListener('mousedown', startDrag);
+                icon.addEventListener('touchstart', startDrag);
+            });
+
+
+            // ==============================================
+            // 4. 메모장 윈도우 드래그 로직 (새로 추가)
+            // ==============================================
+            if (notepadWindow) {
+                const dragHandle = notepadWindow.querySelector('.window-header'); 
+                let isDraggingNotepad = false;
+                let offsetX, offsetY;
+                
+                const startDragNotepad = (e) => {
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const clientY = e.clientY || e.touches[0].clientY;
+
+                    isDraggingNotepad = false;
+                    
+                    const rect = notepadWindow.getBoundingClientRect();
+                    offsetX = clientX - rect.left;
+                    offsetY = clientY - rect.top;
+
+                    notepadWindow.style.zIndex = 1002; 
+
+                    document.addEventListener('mousemove', dragMoveNotepad);
+                    document.addEventListener('mouseup', endDragNotepad);
+                    document.addEventListener('touchmove', dragMoveNotepad);
+                    document.addEventListener('touchend', endDragNotepad);
+                };
+
+                const dragMoveNotepad = (e) => {
+                    e.preventDefault(); 
+                    isDraggingNotepad = true; 
+
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const clientY = e.clientY || e.touches[0].clientY;
+
+                    const containerRect = filesContainer.getBoundingClientRect();
+                    const containerWidth = containerRect.width;
+                    const containerHeight = containerRect.height;
+
+
+                    let newX = clientX - containerRect.left - offsetX;
+                    let newY = clientY - containerRect.top - offsetY;
+
+                    // 경계 체크
+                    newX = Math.max(0, Math.min(newX, containerWidth - notepadWindow.offsetWidth));
+                    newY = Math.max(0, Math.min(newY, containerHeight - notepadWindow.offsetHeight));
+
+                    notepadWindow.style.left = `${newX}px`;
+                    notepadWindow.style.top = `${newY}px`;
+                };
+
+                const endDragNotepad = () => {
+                    if (isDraggingNotepad) {
+                        notepadWindow.style.zIndex = 5; 
+                    }
+
+                    document.removeEventListener('mousemove', dragMoveNotepad);
+                    document.removeEventListener('mouseup', endDragNotepad);
+                    document.removeEventListener('touchmove', dragMoveNotepad);
+                    document.removeEventListener('touchend', endDragNotepad);
+                };
+
+                dragHandle.addEventListener('mousedown', startDragNotepad);
+                dragHandle.addEventListener('touchstart', startDragNotepad);
+            }
+
+
+            // ==============================================
+            // 5. 타이핑 효과 (Typewriter Effect) - 무한 루프 (Infinite Loop) 기능 추가
+            // ==============================================
+            function typeWriterEffect(elementId, text, speed, deleteSpeed, loopDelay) {
+                const element = document.getElementById(elementId);
+                let i = 0;
+
+                function typing() {
+                    if (i < text.length) {
+                        // 타이핑 진행
+                        element.innerHTML += text.charAt(i);
+                        i++;
+                        setTimeout(typing, speed);
+                    } else {
+                        // 타이핑 완료 후, 잠시 대기 후 삭제 시작
+                        setTimeout(deleting, loopDelay);
+                    }
+                }
+
+                function deleting() {
+                    if (element.innerHTML.length > 0) {
+                        // 삭제 진행
+                        element.innerHTML = element.innerHTML.slice(0, -1);
+                        setTimeout(deleting, deleteSpeed);
+                    } else {
+                        // 삭제 완료 후, 타이핑 처음부터 다시 시작
+                        i = 0;
+                        setTimeout(typing, speed);
+                    }
+                }
+
+                typing(); // 최초 실행
+            }
+
+            // 'Welcome' 텍스트에 타이핑 -> 삭제 -> 타이핑 루프 효과 적용
+            // (타이핑 속도: 150ms, 삭제 속도: 50ms, 루프 딜레이: 1500ms)
+            typeWriterEffect('typing-output', 'Welcome!', 150, 50, 1500);
+
+        });
+    </script>
+
+</body>
+</html>
